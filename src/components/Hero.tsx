@@ -11,9 +11,10 @@ interface HeroProps {
 
 const heroImages = [
   '/images/image-01.jpg',
-  '/images/image-06.jpg',
-  '/images/image-12.jpg',
-  '/images/image-18.jpg',
+  '/images/image-04.jpg',
+  '/images/image-02.jpg',
+  '/images/image-03.jpg',
+  '/images/image-05.jpg',
 ]
 
 export default function Hero({ lang, dict }: HeroProps) {

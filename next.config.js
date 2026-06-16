@@ -10,7 +10,7 @@ const nextConfig = {
       },
     ],
   },
-  metadataBase: new URL('https://selrahcarchitects.com'),
+
 }
 
 module.exports = nextConfig

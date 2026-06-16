@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
 interface HeaderProps {
@@ -47,13 +48,15 @@ export default function Header({ lang, dict }: HeaderProps) {
       }`}
     >
       <div className="container-premium flex items-center justify-between h-18 md:h-22">
-        <Link href={`/${lang}`} className="relative z-10 flex-shrink-0">
-          <span className="font-display text-lg md:text-xl text-white tracking-wide">
-            SELRAHC
-          </span>
-          <span className="block text-[7px] md:text-[8px] font-alt text-stone-500 tracking-[0.5em] uppercase -mt-0.5">
-            Architects
-          </span>
+        <Link href={`/${lang}`} className="relative z-10 flex-shrink-0 block w-28 md:w-36">
+          <Image
+            src="/images/logo.png"
+            alt="Selrahc Architects"
+            width={288}
+            height={64}
+            className="w-full h-auto object-contain brightness-0 invert"
+            priority
+          />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8">

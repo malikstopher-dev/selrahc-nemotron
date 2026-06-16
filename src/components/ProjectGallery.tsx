@@ -26,7 +26,7 @@ export default function ProjectGallery({ images, title }: ProjectGalleryProps) {
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 md:gap-2">
-        {images.slice(0, 7).map((src, i) => (
+          {images.map((src, i) => (
           <div
             key={src}
             className={`relative overflow-hidden cursor-pointer group ${

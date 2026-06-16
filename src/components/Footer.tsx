@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface FooterProps {
   lang: string
@@ -20,9 +21,14 @@ export default function Footer({ lang, dict }: FooterProps) {
       <div className="container-premium py-20 md:py-28">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
           <div className="lg:col-span-2">
-            <Link href={`/${lang}`} className="inline-block mb-6">
-              <span className="font-display text-2xl text-white tracking-wide">SELRAHC</span>
-              <span className="block text-[8px] font-alt text-stone-500 tracking-[0.5em] uppercase">Architects</span>
+            <Link href={`/${lang}`} className="inline-block mb-6 w-36 md:w-44">
+              <Image
+                src="/images/logo.png"
+                alt="Selrahc Architects"
+                width={352}
+                height={80}
+                className="w-full h-auto object-contain brightness-0 invert"
+              />
             </Link>
             <p className="text-body text-sm max-w-md leading-relaxed">
               {dict.footer.description}
