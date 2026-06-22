@@ -107,9 +107,17 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 md:mt-12 pt-6 md:pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
-          <p className="text-xs text-arch-gray text-center md:text-left">
-            &copy; {new Date().getFullYear()} Selrahc Architects. {dict.footer.rights}
-          </p>
+          <div className="flex flex-col items-center md:items-start gap-1">
+            <p className="text-xs text-arch-gray text-center md:text-left">
+              &copy; {new Date().getFullYear()} Selrahc Architects. {dict.footer.rights}
+            </p>
+            <p className="text-xs text-arch-gray text-center md:text-left">
+              Website by{' '}
+              <a href="https://stopher-malik.co.za" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                Stopher Malik
+              </a>
+            </p>
+          </div>
           <div className="flex items-center gap-5 md:gap-6">
             <a href="#" className="text-xs text-arch-gray hover:text-white transition-colors min-h-[36px] flex items-center" aria-label="Facebook">Facebook</a>
             <a href="#" className="text-xs text-arch-gray hover:text-white transition-colors min-h-[36px] flex items-center" aria-label="Instagram">Instagram</a>
