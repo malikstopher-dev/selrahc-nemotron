@@ -13,6 +13,8 @@ export default function ContactPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const honeypotRef = useState('');
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -28,11 +30,20 @@ export default function ContactPage() {
     e.preventDefault();
     setSubmitError(false);
     if (!validate()) return;
+    setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, _hp: honeypotRef[0] }),
+      });
+      if (!res.ok) throw new Error('Failed');
       setSubmitted(true);
+      setFormData({ name: '', email: '', phone: '', projectType: '', budget: '', message: '' });
     } catch {
       setSubmitError(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,6 +91,10 @@ export default function ContactPage() {
                 </motion.div>
               ) : (
                 <form onSubmit={handleSubmit} noValidate className="space-y-4 md:space-y-5">
+                  <div aria-hidden="true" className="absolute left-[-9999px]">
+                    <label htmlFor="_hp">Leave empty</label>
+                    <input id="_hp" name="_hp" type="text" value={honeypotRef[0]} onChange={() => {}} tabIndex={-1} autoComplete="off" />
+                  </div>
                   <div>
                     <label className="block text-xs uppercase tracking-[0.15em] text-arch-gray mb-1.5">{f.name}</label>
                     <input
@@ -136,10 +151,10 @@ export default function ContactPage() {
                     {errors.message && <p className="text-red-500 text-xs mt-1.5">{errors.message}</p>}
                   </div>
                   {submitError && <p className="text-red-500 text-sm">{dict.contact.form.error}</p>}
-                  <button type="submit"
-                    className="w-full text-center text-xs uppercase tracking-[0.2em] px-8 py-4 bg-arch-black text-white hover:bg-arch-dark transition-all duration-300 min-h-[52px]"
+                  <button type="submit" disabled={loading}
+                    className="w-full text-center text-xs uppercase tracking-[0.2em] px-8 py-4 bg-arch-black text-white hover:bg-arch-dark transition-all duration-300 min-h-[52px] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {dict.contact.form.submit}
+                    {loading ? (locale === 'en' ? 'Sending...' : 'Envoi...') : dict.contact.form.submit}
                   </button>
                 </form>
               )}
