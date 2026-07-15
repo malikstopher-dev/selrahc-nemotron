@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   robots: 'index, follow',
   icons: {
     icon: '/logo.png',
-    shortcut: '/logo.png',
     apple: '/logo.png',
   },
   metadataBase: new URL('https://selrahcarchitects.com'),
