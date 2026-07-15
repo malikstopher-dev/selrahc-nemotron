@@ -3,6 +3,7 @@ import { LanguageProvider } from '@/i18n/LanguageProvider';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import WhatsAppButton from '@/components/layout/WhatsAppButton';
+import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -78,10 +79,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased">
         <LanguageProvider>
-          <Header />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
-          <WhatsAppButton />
+          <SmoothScrollProvider>
+            <Header />
+            <main className="min-h-screen">{children}</main>
+            <Footer />
+            <WhatsAppButton />
+          </SmoothScrollProvider>
         </LanguageProvider>
         {/*
           Website designed and developed by Stopher Malik
