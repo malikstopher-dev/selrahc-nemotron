@@ -14,7 +14,6 @@ export const metadata: Metadata = {
   keywords: 'architecture, residential design, commercial architecture, interior architecture, renovations, architectural studio, Johannesburg, South Africa, luxury homes, custom house plans, hospitality architecture',
   authors: [{ name: 'Stopher Malik', url: 'https://stopher-malik.co.za' }],
   creator: 'Stopher Malik',
-  designer: 'SMK Web Design',
   robots: 'index, follow',
   icons: {
     icon: '/logo.png',
