@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import TextField from '@/components/admin/TextField';
 import SaveButton from '@/components/admin/SaveButton';
-import ImageUploader from '@/components/admin/ImageUploader';
+import ImagePicker from '@/components/admin/ImagePicker';
 import Toast from '@/components/admin/Toast';
 
 export default function ProjectEditor() {
@@ -15,7 +15,8 @@ export default function ProjectEditor() {
   const [location, setLocation] = useState('');
   const [year, setYear] = useState('');
   const [description, setDescription] = useState('');
-  const [images, setImages] = useState<{ id: string; image_url: string; alt_text: string; sort_order: number }[]>([]);
+  const [images, setImages] = useState<string[]>([]);
+  const [originalImages, setOriginalImages] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
 
@@ -28,41 +29,50 @@ export default function ProjectEditor() {
     setLocation(data.location);
     setYear(data.year);
     setDescription(data.description);
-    setImages(data.images || []);
+    const imgUrls = (data.images || []).map((i: { image_url: string }) => i.image_url);
+    setImages(imgUrls);
+    setOriginalImages(imgUrls);
   }, [id, router]);
 
   useEffect(() => { load(); }, [load]);
 
   const save = async () => {
     setSaving(true);
+
+    // Save project text
     const res = await fetch(`/api/admin/projects/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, category, location, year, description }),
     });
+
+    // Sync images — delete removed, add new, update order
+    const removed = originalImages.filter(url => !images.includes(url));
+    for (const url of removed) {
+      await fetch(`/api/admin/projects/images?project_id=${id}&image_url=${encodeURIComponent(url)}`, { method: 'DELETE' });
+    }
+
+    for (let i = 0; i < images.length; i++) {
+      const url = images[i];
+      const wasOriginal = originalImages.includes(url);
+      if (!wasOriginal) {
+        await fetch('/api/admin/projects/images', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ project_id: id, image_url: url, sort_order: i }),
+        });
+      } else {
+        await fetch('/api/admin/projects/images', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ project_id: id, image_url: url, sort_order: i }),
+        });
+      }
+    }
+
+    setOriginalImages(images);
     setSaving(false);
     setToast(res.ok ? { msg: 'Project saved', type: 'success' } : { msg: 'Failed to save', type: 'error' });
-  };
-
-  const onUpload = async (url: string) => {
-    const res = await fetch('/api/admin/projects/images', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ project_id: id, image_url: url, sort_order: images.length }),
-    });
-    if (res.ok) {
-      const { data } = await res.json();
-      setImages(prev => [...prev, data]);
-      setToast({ msg: 'Image added', type: 'success' });
-    }
-  };
-
-  const removeImage = async (imgId: string) => {
-    const res = await fetch(`/api/admin/projects/images?id=${imgId}`, { method: 'DELETE' });
-    if (res.ok) {
-      setImages(prev => prev.filter(i => i.id !== imgId));
-      setToast({ msg: 'Image removed', type: 'success' });
-    }
   };
 
   return (
@@ -100,18 +110,15 @@ export default function ProjectEditor() {
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="bg-arch-dark p-6 border border-arch-gray/10 space-y-4">
-            <h2 className="text-white text-sm uppercase tracking-[0.15em]">Images</h2>
-            <ImageUploader onUpload={onUpload} bucket="project-images" />
-            <div className="grid grid-cols-2 gap-2 mt-4">
-              {images.map((img) => (
-                <div key={img.id} className="relative group aspect-video bg-arch-black overflow-hidden">
-                  <img src={img.image_url} alt={img.alt_text} className="w-full h-full object-cover" />
-                  <button onClick={() => removeImage(img.id)} className="absolute top-1 right-1 bg-red-600 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">Remove</button>
-                </div>
-              ))}
-            </div>
+        <div>
+          <div className="bg-arch-dark p-6 border border-arch-gray/10">
+            <ImagePicker
+              images={images}
+              onChange={setImages}
+              label="Project Images"
+              bucket="project-images"
+              max={10}
+            />
           </div>
         </div>
       </div>
