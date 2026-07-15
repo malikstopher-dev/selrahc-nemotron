@@ -41,7 +41,7 @@ export default function FaqPage() {
 
   return (
     <>
-      <section className="pt-24 pb-12 md:pt-40 md:pb-24 bg-arch-black">
+      <section className="pt-24 pb-12 md:pt-40 md:pb-24 bg-arch-white">
         <div className="container-main">
           <SectionTitle title={dict.faq.title} subtitle={dict.faq.subtitle} />
         </div>

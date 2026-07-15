@@ -56,7 +56,7 @@ export default function PortfolioPage() {
 
   return (
     <>
-      <section className="pt-24 pb-12 md:pt-40 md:pb-20 bg-arch-black">
+      <section className="pt-24 pb-12 md:pt-40 md:pb-20 bg-arch-white">
         <div className="container-main">
           <SectionTitle title={dict.portfolio.title} subtitle={dict.portfolio.subtitle} />
           <motion.div
@@ -71,7 +71,7 @@ export default function PortfolioPage() {
                 className={`px-4 md:px-5 py-2.5 md:py-2 text-[10px] md:text-xs uppercase tracking-[0.2em] border transition-all duration-300 min-h-[40px] ${
                   activeCategory === cat.id
                     ? 'border-arch-bronze text-arch-bronze bg-arch-bronze/10'
-                    : 'border-white/20 text-white/60 hover:border-white/40 hover:text-white'
+                    : 'border-arch-gray/30 text-arch-gray hover:border-arch-black hover:text-arch-black'
                 }`}
               >
                 {catLabels[cat.id]}

@@ -24,16 +24,16 @@ const LanguageContext = createContext<LanguageContextType>({
 function mergeCmsContent(base: Dictionary, cmsData: Record<string, unknown> | null): Dictionary {
   if (!cmsData) return base;
 
-  const merged = { ...base };
+  const merged = { ...base } as Record<string, unknown>;
 
   for (const key of Object.keys(merged)) {
     const cmsValue = cmsData[key];
     if (cmsValue && typeof cmsValue === 'object' && typeof merged[key] === 'object' && merged[key] !== null) {
-      merged[key] = { ...(merged[key] as Record<string, unknown>), ...(cmsValue as Record<string, unknown>) } as never;
+      merged[key] = { ...(merged[key] as Record<string, unknown>), ...(cmsValue as Record<string, unknown>) };
     }
   }
 
-  return merged;
+  return merged as Dictionary;
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
@@ -50,23 +50,23 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
     // Fetch CMS content from Supabase
     const supabase = createClient();
-    supabase
-      .from('site_content')
-      .select('*')
-      .eq('locale', initial)
-      .then(({ data }) => {
-        if (data && data.length > 0) {
-          const cmsMap: Record<string, unknown> = {};
-          for (const item of data) {
-            cmsMap[item.key] = item.value;
-          }
-          setDict(mergeCmsContent(dictionaries[initial], cmsMap));
+    Promise.resolve(
+      supabase
+        .from('site_content')
+        .select('*')
+        .eq('locale', initial)
+    ).then(({ data }) => {
+      if (data && data.length > 0) {
+        const cmsMap: Record<string, unknown> = {};
+        for (const item of data) {
+          cmsMap[item.key] = item.value;
         }
-        setCmsLoaded(true);
-      })
-      .catch(() => {
-        setCmsLoaded(true);
-      });
+        setDict(mergeCmsContent(dictionaries[initial], cmsMap));
+      }
+      setCmsLoaded(true);
+    }).catch(() => {
+      setCmsLoaded(true);
+    });
   }, []);
 
   const setLocale = useCallback((newLocale: Locale) => {
@@ -74,24 +74,24 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('selrahc-locale', newLocale);
 
     const supabase = createClient();
-    supabase
-      .from('site_content')
-      .select('*')
-      .eq('locale', newLocale)
-      .then(({ data }) => {
-        if (data && data.length > 0) {
-          const cmsMap: Record<string, unknown> = {};
-          for (const item of data) {
-            cmsMap[item.key] = item.value;
-          }
-          setDict(mergeCmsContent(dictionaries[newLocale], cmsMap));
-        } else {
-          setDict(dictionaries[newLocale]);
+    Promise.resolve(
+      supabase
+        .from('site_content')
+        .select('*')
+        .eq('locale', newLocale)
+    ).then(({ data }) => {
+      if (data && data.length > 0) {
+        const cmsMap: Record<string, unknown> = {};
+        for (const item of data) {
+          cmsMap[item.key] = item.value;
         }
-      })
-      .catch(() => {
+        setDict(mergeCmsContent(dictionaries[newLocale], cmsMap));
+      } else {
         setDict(dictionaries[newLocale]);
-      });
+      }
+    }).catch(() => {
+      setDict(dictionaries[newLocale]);
+    });
   }, []);
 
   if (!mounted) {

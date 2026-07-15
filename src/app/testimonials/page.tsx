@@ -12,7 +12,7 @@ export default function TestimonialsPage() {
 
   return (
     <>
-      <section className="pt-24 pb-12 md:pt-40 md:pb-24 bg-arch-black">
+      <section className="pt-24 pb-12 md:pt-40 md:pb-24 bg-arch-white">
         <div className="container-main">
           <SectionTitle title={dict.testimonials.title} subtitle={dict.testimonials.subtitle} />
         </div>

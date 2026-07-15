@@ -113,8 +113,12 @@ export default function Footer() {
             </p>
             <p className="text-xs text-arch-gray text-center md:text-left">
               Website by{' '}
-              <a href="https://stopher-malik.co.za" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+              <a href="https://stopher-malik.co.za" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-arch-bronze" aria-label="Stopher Malik - Web Developer">
                 Stopher Malik
+              </a>
+              {' '}&{' '}
+              <a href="https://smk.stopher-malik.co.za" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-arch-bronze" aria-label="SMK Web Design">
+                SMK Web Design
               </a>
             </p>
           </div>

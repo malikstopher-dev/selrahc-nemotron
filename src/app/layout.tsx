@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   },
   description: 'Selrahc Architects is a Johannesburg-based architecture practice specialising in residential, commercial, hospitality, and interior architecture — known for spatial intelligence, design rigour, and architecture of enduring value.',
   keywords: 'architecture, residential design, commercial architecture, interior architecture, renovations, architectural studio, Johannesburg, South Africa, luxury homes, custom house plans, hospitality architecture',
+  authors: [{ name: 'Stopher Malik', url: 'https://stopher-malik.co.za' }],
+  creator: 'Stopher Malik',
+  designer: 'SMK Web Design',
   robots: 'index, follow',
   metadataBase: new URL('https://selrahcarchitects.com'),
   alternates: {
@@ -47,6 +50,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     email: 'selrahc.architects@gmail.com',
     url: 'https://selrahcarchitects.com',
     description: 'A Johannesburg-based architecture practice specialising in residential, commercial, hospitality, and interior architecture — known for spatial intelligence and design rigour.',
+    creator: {
+      '@type': 'Person',
+      name: 'Stopher Malik',
+      url: 'https://stopher-malik.co.za',
+    },
+    copyrightHolder: {
+      '@type': 'Organization',
+      name: 'SMK Web Design',
+      url: 'https://smk.stopher-malik.co.za',
+    },
   };
 
   return (
@@ -67,6 +80,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer />
           <WhatsAppButton />
         </LanguageProvider>
+        {/*
+          Website designed and developed by Stopher Malik
+          https://stopher-malik.co.za
+
+          SMK Web Design
+          https://smk.stopher-malik.co.za
+        */}
       </body>
     </html>
   );
