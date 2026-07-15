@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     if (email && password) {
       const supabase = createServiceClient();
       const { data: existing } = await supabase.auth.admin.listUsers();
-      const adminUser = existing?.users?.find((u: { email: string }) => u.email === email);
+      const adminUser = existing?.users?.find((u) => u.email === email);
 
       if (adminUser) {
         await supabase.auth.admin.updateUserById(adminUser.id, { password });
