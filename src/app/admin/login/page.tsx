@@ -8,6 +8,7 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [setupMsg, setSetupMsg] = useState('');
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,6 +39,36 @@ export default function AdminLogin() {
     }
   };
 
+  const handleSetup = async () => {
+    if (!email || !password) {
+      setError('Enter email and password first, then click Setup Admin.');
+      return;
+    }
+    setError('');
+    setSetupMsg('Creating admin account...');
+
+    try {
+      const res = await fetch('/api/admin/setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Setup failed');
+        setSetupMsg('');
+        return;
+      }
+
+      setSetupMsg(data.message || 'Account ready! You can now sign in.');
+    } catch {
+      setError('Setup request failed.');
+      setSetupMsg('');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-arch-black flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -55,7 +86,7 @@ export default function AdminLogin() {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full bg-arch-black text-white px-4 py-3 border border-arch-gray/20 focus:border-arch-bronze outline-none transition-colors text-sm"
-              placeholder="admin@selrahcarchitects.com"
+              placeholder="selrahc.architects@gmail.com"
             />
           </div>
 
@@ -75,6 +106,10 @@ export default function AdminLogin() {
             <p className="text-red-400 text-sm">{error}</p>
           )}
 
+          {setupMsg && (
+            <p className="text-green-400 text-sm">{setupMsg}</p>
+          )}
+
           <button
             type="submit"
             disabled={loading}
@@ -82,6 +117,17 @@ export default function AdminLogin() {
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
+
+          <div className="border-t border-arch-gray/10 pt-4">
+            <p className="text-arch-gray/50 text-[11px] mb-3">First time? Create your admin account:</p>
+            <button
+              type="button"
+              onClick={handleSetup}
+              className="w-full border border-arch-gray/30 text-arch-gray text-xs uppercase tracking-[0.15em] py-3 hover:border-arch-bronze hover:text-arch-bronze transition-colors"
+            >
+              Setup Admin Account
+            </button>
+          </div>
         </form>
       </div>
     </div>
