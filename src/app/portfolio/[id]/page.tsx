@@ -1,18 +1,50 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { projects, getProject } from '@/data/projects';
+import { projects as staticProjects, getProject as getStaticProject } from '@/data/projects';
+import { createClient } from '@/lib/supabase/client';
 import Button from '@/components/ui/Button';
+
+interface Project {
+  id: string;
+  title: string;
+  category: string;
+  location: string;
+  year: string;
+  description: string;
+  images: string[];
+}
 
 export default function ProjectDetailPage() {
   const { dict } = useLanguage();
   const params = useParams();
   const id = params.id as string;
-  const project = getProject(id);
+  const [allProjects, setAllProjects] = useState<Project[]>(staticProjects);
+  const [project, setProject] = useState<Project | undefined>(getStaticProject(id));
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.from('projects').select('*, project_images(image_url, sort_order)').order('order_index').then(({ data }) => {
+      if (data && data.length > 0) {
+        const parsed = data.map(p => ({
+          id: p.id,
+          title: p.title,
+          category: p.category,
+          location: p.location,
+          year: p.year,
+          description: p.description,
+          images: (p.project_images || []).sort((a: { sort_order: number }, b: { sort_order: number }) => a.sort_order - b.sort_order).map((i: { image_url: string }) => i.image_url),
+        }));
+        setAllProjects(parsed);
+        setProject(parsed.find(p => p.id === id));
+      }
+    });
+  }, [id]);
 
   if (!project) {
     return (
@@ -25,9 +57,9 @@ export default function ProjectDetailPage() {
     );
   }
 
-  const currentIndex = projects.findIndex(p => p.id === project.id);
-  const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null;
-  const nextProject = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
+  const currentIndex = allProjects.findIndex(p => p.id === project.id);
+  const prevProject = currentIndex > 0 ? allProjects[currentIndex - 1] : null;
+  const nextProject = currentIndex < allProjects.length - 1 ? allProjects[currentIndex + 1] : null;
 
   const catLabels: Record<string, string> = {
     residential: dict.portfolio.categories.residential,

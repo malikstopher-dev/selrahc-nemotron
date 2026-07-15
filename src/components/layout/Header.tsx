@@ -18,8 +18,17 @@ const navLinks = [
 ];
 
 const menuVariants = {
-  closed: { opacity: 0, x: '100%' },
-  open: { opacity: 1, x: 0 },
+  closed: { opacity: 0 },
+  open: { opacity: 1 },
+};
+
+const menuItemVariants = {
+  closed: { opacity: 0, y: 12 },
+  open: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: 0.06 * i, duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
+  }),
 };
 
 export default function Header() {
@@ -40,11 +49,21 @@ export default function Header() {
 
   useEffect(() => {
     if (mobileOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${window.scrollY}px`;
+      document.body.style.width = '100%';
     } else {
-      document.body.style.overflow = '';
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (scrollY) window.scrollTo(0, parseInt(scrollY || '0') * -1);
     }
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+    };
   }, [mobileOpen]);
 
   useEffect(() => {
@@ -81,7 +100,7 @@ export default function Header() {
     >
       <div className="container-main">
         <div className="flex items-center justify-between h-16 md:h-24">
-          <Link href="/" className="relative z-20" aria-label="Selrahc Architects Home">
+          <Link href="/" className="relative z-30" aria-label="Selrahc Architects Home">
             <Image
               src="/images/logo.png"
               alt="Selrahc Architects"
@@ -142,7 +161,7 @@ export default function Header() {
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden relative z-20 w-10 h-10 flex flex-col items-center justify-center gap-[5px] -mr-2"
+            className="lg:hidden relative z-30 w-10 h-10 flex flex-col items-center justify-center gap-[5px] -mr-2"
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
           >
@@ -176,8 +195,8 @@ export default function Header() {
             initial="closed"
             animate="open"
             exit="closed"
-            transition={{ type: 'tween', duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="fixed inset-0 top-0 bg-white z-10 overflow-y-auto"
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 top-0 bg-white z-20"
             role="dialog"
             aria-modal="true"
             aria-label={locale === 'en' ? 'Navigation menu' : 'Menu de navigation'}
@@ -186,9 +205,10 @@ export default function Header() {
               {[...navLinks, { href: '/testimonials', key: 'testimonials' }, { href: '/faq', key: 'faq' }, { href: '/quote', key: 'quote' }].map((link, i) => (
                 <motion.div
                   key={link.href}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 * i, duration: 0.4 }}
+                  custom={i}
+                  variants={menuItemVariants}
+                  initial="closed"
+                  animate="open"
                 >
                   <Link
                     href={link.href}
@@ -201,9 +221,10 @@ export default function Header() {
                 </motion.div>
               ))}
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
+                custom={8}
+                variants={menuItemVariants}
+                initial="closed"
+                animate="open"
                 className="flex items-center gap-4 pt-8 mt-auto"
               >
                 {locales.map((l) => (

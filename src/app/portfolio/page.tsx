@@ -1,20 +1,49 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { projects, categories } from '@/data/projects';
+import { projects as staticProjects, categories } from '@/data/projects';
+import { createClient } from '@/lib/supabase/client';
 import SectionTitle from '@/components/ui/SectionTitle';
+
+interface Project {
+  id: string;
+  title: string;
+  category: string;
+  location: string;
+  year: string;
+  description: string;
+  images: string[];
+}
 
 export default function PortfolioPage() {
   const { dict } = useLanguage();
   const [activeCategory, setActiveCategory] = useState('all');
+  const [allProjects, setAllProjects] = useState<Project[]>(staticProjects);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.from('projects').select('*, project_images(image_url, sort_order)').order('order_index').then(({ data }) => {
+      if (data && data.length > 0) {
+        setAllProjects(data.map(p => ({
+          id: p.id,
+          title: p.title,
+          category: p.category,
+          location: p.location,
+          year: p.year,
+          description: p.description,
+          images: (p.project_images || []).sort((a: { sort_order: number }, b: { sort_order: number }) => a.sort_order - b.sort_order).map((i: { image_url: string }) => i.image_url),
+        })));
+      }
+    });
+  }, []);
 
   const filteredProjects = activeCategory === 'all'
-    ? projects
-    : projects.filter(p => p.category === activeCategory);
+    ? allProjects
+    : allProjects.filter(p => p.category === activeCategory);
 
   const catLabels: Record<string, string> = {
     all: dict.portfolio.categories.all,

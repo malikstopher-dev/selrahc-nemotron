@@ -6,9 +6,12 @@ import WhatsAppButton from '@/components/layout/WhatsAppButton';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Selrahc Architects | Award-Winning Architecture & Design Studio',
-  description: 'Selrahc Architects is a premier architecture firm specialising in luxury residential design, renovations, and architectural consulting across South Africa.',
-  keywords: 'architecture, residential design, renovations, architectural studio, Johannesburg, South Africa, luxury homes, custom house plans',
+  title: {
+    default: 'Selrahc Architects | Spatial Intelligence, Design Excellence — Johannesburg',
+    template: '%s | Selrahc Architects',
+  },
+  description: 'Selrahc Architects is a Johannesburg-based architecture practice specialising in residential, commercial, hospitality, and interior architecture — known for spatial intelligence, design rigour, and architecture of enduring value.',
+  keywords: 'architecture, residential design, commercial architecture, interior architecture, renovations, architectural studio, Johannesburg, South Africa, luxury homes, custom house plans, hospitality architecture',
   robots: 'index, follow',
   metadataBase: new URL('https://selrahcarchitects.com'),
   alternates: {
@@ -22,14 +25,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_ZA',
     siteName: 'Selrahc Architects',
-    title: 'Selrahc Architects | Award-Winning Architecture & Design Studio',
-    description: 'Premier architecture firm specialising in luxury residential design, renovations, and architectural consulting.',
+    title: 'Selrahc Architects | Spatial Intelligence, Design Excellence — Johannesburg',
+    description: 'A Johannesburg-based architecture practice specialising in residential, commercial, hospitality, and interior architecture — known for spatial intelligence and design rigour.',
     url: 'https://selrahcarchitects.com',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Selrahc Architects',
-    description: 'Designing Spaces. Creating Legacies.',
+    description: 'Architecture of enduring value — residential, commercial, and interior architecture by Selrahc Architects, Johannesburg.',
   },
 };
 
@@ -43,7 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     telephone: '+27 73 697 4907',
     email: 'selrahc.architects@gmail.com',
     url: 'https://selrahcarchitects.com',
-    description: 'Premier architecture firm specialising in luxury residential design, renovations, and architectural consulting.',
+    description: 'A Johannesburg-based architecture practice specialising in residential, commercial, hospitality, and interior architecture — known for spatial intelligence and design rigour.',
   };
 
   return (

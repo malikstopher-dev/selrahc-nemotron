@@ -5,25 +5,81 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { projects, heroImages, allImages } from '@/data/projects';
+import { projects as staticProjects, heroImages as staticHeroImages, allImages as staticAllImages } from '@/data/projects';
+import { createClient } from '@/lib/supabase/client';
 import SectionTitle from '@/components/ui/SectionTitle';
 import RevealText from '@/components/ui/RevealText';
+
+interface CmsProject {
+  id: string;
+  title: string;
+  category: string;
+  location: string;
+  year: string;
+  description: string;
+  images: string[];
+}
+
+interface CmsTestimonial {
+  name: string;
+  location: string;
+  text: string;
+}
 
 export default function HomePage() {
   const { dict } = useLanguage();
   const [currentHero, setCurrentHero] = useState(0);
+  const [cmsProjects, setCmsProjects] = useState<CmsProject[]>([]);
+  const [cmsTestimonials, setCmsTestimonials] = useState<CmsTestimonial[]>([]);
+  const [heroImgs, setHeroImgs] = useState<string[]>(staticHeroImages);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    supabase.from('projects').select('*, project_images(image_url, sort_order)').order('order_index').then(({ data }) => {
+      if (data && data.length > 0) {
+        const parsed = data.map(p => ({
+          id: p.id,
+          title: p.title,
+          category: p.category,
+          location: p.location,
+          year: p.year,
+          description: p.description,
+          images: (p.project_images || []).sort((a: { sort_order: number }, b: { sort_order: number }) => a.sort_order - b.sort_order).map((i: { image_url: string }) => i.image_url),
+        }));
+        setCmsProjects(parsed);
+      }
+    });
+
+    supabase.from('testimonials').select('*').order('sort_order').then(({ data }) => {
+      if (data && data.length > 0) {
+        setCmsTestimonials(data.map(t => ({ name: t.name, location: t.location, text: t.text })));
+      }
+    });
+
+    supabase.from('site_content').select('value').eq('key', 'hero').eq('locale', 'en').single().then(({ data }) => {
+      if (data?.value && typeof data.value === 'object' && 'heroImages' in data.value) {
+        const val = data.value as { heroImages?: string[] };
+        if (val.heroImages && val.heroImages.length > 0) {
+          setHeroImgs(val.heroImages);
+        }
+      }
+    });
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentHero((prev) => (prev + 1) % heroImages.length);
+      setCurrentHero((prev) => (prev + 1) % heroImgs.length);
     }, 6000);
     return () => clearInterval(interval);
-  }, []);
+  }, [heroImgs.length]);
 
-  const featuredProjects = projects.slice(0, 4);
-  const services = dict.services.items;
-  const processSteps = dict.process.steps;
-  const testimonials = dict.testimonials.items;
+  const displayProjects = cmsProjects.length > 0 ? cmsProjects : staticProjects;
+  const featuredProjects = displayProjects.slice(0, 4);
+  const displayTestimonials = cmsTestimonials.length > 0 ? cmsTestimonials : dict.testimonials.items;
+  const allImages = cmsProjects.length > 0
+    ? [...cmsProjects.map((p: CmsProject) => p.images[0]).filter(Boolean), ...staticAllImages.slice(cmsProjects.length)]
+    : staticAllImages;
 
   return (
     <>
@@ -39,7 +95,7 @@ export default function HomePage() {
             className="absolute inset-0"
           >
             <Image
-              src={heroImages[currentHero]}
+              src={heroImgs[currentHero % heroImgs.length]}
               alt="Selrahc Architects portfolio"
               fill
               className="object-cover"
@@ -322,7 +378,7 @@ export default function HomePage() {
             subtitle={dict.testimonials.subtitle}
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
-            {testimonials.map((testimonial, index) => (
+            {displayTestimonials.map((testimonial, index) => (
               <motion.div
                 key={testimonial.name}
                 initial={{ opacity: 0, y: 30 }}
