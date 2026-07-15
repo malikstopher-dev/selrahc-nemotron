@@ -77,6 +77,8 @@ export default function HomePage() {
   const displayProjects = cmsProjects.length > 0 ? cmsProjects : staticProjects;
   const featuredProjects = displayProjects.slice(0, 4);
   const displayTestimonials = cmsTestimonials.length > 0 ? cmsTestimonials : dict.testimonials.items;
+  const services = dict.services.items;
+  const processSteps = dict.process.steps;
   const allImages = cmsProjects.length > 0
     ? [...cmsProjects.map((p: CmsProject) => p.images[0]).filter(Boolean), ...staticAllImages.slice(cmsProjects.length)]
     : staticAllImages;
