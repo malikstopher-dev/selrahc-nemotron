@@ -4,25 +4,28 @@ import { NextResponse, type NextRequest } from 'next/server';
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request: { headers: request.headers } });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
-        },
-        set(name: string, value: string) {
-          request.cookies.set({ name, value });
-          response.cookies.set({ name, value });
-        },
-        remove(name: string) {
-          request.cookies.set({ name, value: '' });
-          response.cookies.set({ name, value: '' });
-        },
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    return response;
+  }
+
+  const supabase = createServerClient(supabaseUrl, supabaseKey, {
+    cookies: {
+      get(name: string) {
+        return request.cookies.get(name)?.value;
       },
-    }
-  );
+      set(name: string, value: string) {
+        request.cookies.set({ name, value });
+        response.cookies.set({ name, value });
+      },
+      remove(name: string) {
+        request.cookies.set({ name, value: '' });
+        response.cookies.set({ name, value: '' });
+      },
+    },
+  });
 
   const { data: { user } } = await supabase.auth.getUser();
 

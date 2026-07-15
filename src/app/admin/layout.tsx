@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import AdminAuthProvider from '@/components/admin/AdminAuthProvider';
 
+export const dynamic = 'force-dynamic';
+
 const navSections = [
   {
     label: 'Content',
