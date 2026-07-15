@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   creator: 'Stopher Malik',
   designer: 'SMK Web Design',
   robots: 'index, follow',
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
   metadataBase: new URL('https://selrahcarchitects.com'),
   alternates: {
     canonical: '/',
