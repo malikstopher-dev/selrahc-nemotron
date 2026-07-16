@@ -1,4 +1,4 @@
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, parseCookieHeader, serializeCookieHeader } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
 export async function createClient() {
@@ -9,21 +9,16 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
+        getAll() {
+          return cookieStore.getAll().map(({ name, value }) => ({ name, value }));
         },
-        set(name: string, value: string, options?: Record<string, unknown>) {
+        setAll(cookiesToSet, headers) {
           try {
-            cookieStore.set({ name, value, ...options } as Parameters<typeof cookieStore.set>[0]);
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options as Parameters<typeof cookieStore.set>[0])
+            );
           } catch {
-            // Server component — ignore
-          }
-        },
-        remove(name: string, options?: Record<string, unknown>) {
-          try {
-            cookieStore.set({ name, value: '', ...options } as Parameters<typeof cookieStore.set>[0]);
-          } catch {
-            // Server component — ignore
+            // Server Component — ignore (can't set cookies here)
           }
         },
       },

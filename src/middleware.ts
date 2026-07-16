@@ -1,28 +1,29 @@
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, parseCookieHeader, serializeCookieHeader } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({ request: { headers: request.headers } });
+  let supabaseResponse = NextResponse.next({ request: { headers: request.headers } });
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
-    return response;
+    return supabaseResponse;
   }
 
   const supabase = createServerClient(supabaseUrl, supabaseKey, {
     cookies: {
-      get(name: string) {
-        return request.cookies.get(name)?.value;
+      getAll() {
+        return parseCookieHeader(request.headers.get('Cookie') ?? '');
       },
-      set(name: string, value: string, options?: Record<string, unknown>) {
-        request.cookies.set({ name, value, ...options });
-        response.cookies.set({ name, value, ...options } as Parameters<typeof response.cookies.set>[0]);
-      },
-      remove(name: string, options?: Record<string, unknown>) {
-        request.cookies.set({ name, value: '', ...options });
-        response.cookies.set({ name, value: '', ...options } as Parameters<typeof response.cookies.set>[0]);
+      setAll(cookiesToSet, headers) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          request.cookies.set({ name, value, ...options });
+          supabaseResponse.cookies.set(name, value, options as Parameters<typeof supabaseResponse.cookies.set>[0]);
+        });
+        Object.entries(headers).forEach(([key, value]) =>
+          supabaseResponse.headers.set(key, value)
+        );
       },
     },
   });
@@ -43,7 +44,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  return response;
+  return supabaseResponse;
 }
 
 export const config = {

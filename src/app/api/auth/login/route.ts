@@ -1,27 +1,26 @@
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, parseCookieHeader, serializeCookieHeader } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
-  const json = await request.json();
-  const { email, password } = json;
+  const { email, password } = await request.json();
 
-  let response = NextResponse.json({ success: true });
+  let supabaseResponse = NextResponse.json({ success: true });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
+        getAll() {
+          return parseCookieHeader(request.headers.get('Cookie') ?? '');
         },
-        set(name: string, value: string, options?: Record<string, unknown>) {
-          request.cookies.set({ name, value, ...options });
-          response.cookies.set({ name, value, ...options } as Parameters<typeof response.cookies.set>[0]);
-        },
-        remove(name: string, options?: Record<string, unknown>) {
-          request.cookies.set({ name, value: '', ...options });
-          response.cookies.set({ name, value: '', ...options } as Parameters<typeof response.cookies.set>[0]);
+        setAll(cookiesToSet, headers) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options as Parameters<typeof supabaseResponse.cookies.set>[0])
+          );
+          Object.entries(headers).forEach(([key, value]) =>
+            supabaseResponse.headers.set(key, value)
+          );
         },
       },
     }
@@ -33,5 +32,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 401 });
   }
 
-  return response;
+  return supabaseResponse;
 }
