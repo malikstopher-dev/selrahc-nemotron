@@ -94,62 +94,71 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? 'bg-white/95 backdrop-blur-sm shadow-sm' : 'bg-transparent'
-      } ${mobileOpen ? 'bg-white shadow-sm' : ''}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
+        scrolled
+          ? 'bg-white/90 backdrop-blur-xl border-b border-arch-black/5'
+          : isHome
+            ? 'bg-gradient-to-b from-black/40 via-black/10 to-transparent backdrop-blur-[2px]'
+            : 'bg-white/95 backdrop-blur-sm'
+      } ${mobileOpen ? 'bg-white border-b border-arch-gray/10' : ''}`}
     >
       <div className="container-main">
-        <div className="flex items-center justify-between h-16 md:h-24">
+        <div className="flex items-center justify-between h-14 md:h-[72px]">
           <Link href="/" className="relative z-30" aria-label="Selrahc Architects Home">
             <Image
               src="/images/logo.png"
               alt="Selrahc Architects"
               width={140}
               height={32}
-              className={`h-6 md:h-8 w-auto transition-all duration-300 ${
-                mobileOpen ? '' : ''
-              } ${!scrolled && isHome && !mobileOpen ? 'brightness-0 invert drop-shadow-sm' : ''}`}
+              className={`h-5 md:h-7 w-auto transition-all duration-500 ${
+                !scrolled && isHome && !mobileOpen ? 'brightness-0 invert' : ''
+              }`}
               priority
             />
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-7">
             {navLinks.map((link) => {
               const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-xs uppercase tracking-[0.2em] transition-colors duration-300 ${
-                    isHome && !scrolled ? 'text-white/70 hover:text-white drop-shadow-sm' : 'text-arch-black/70 hover:text-arch-black'
-                  } ${isActive ? 'font-medium !text-arch-bronze' : ''}`}
+                  className={`relative text-[11px] uppercase tracking-[0.22em] transition-colors duration-300 py-1 ${
+                    isHome && !scrolled ? 'text-white/65 hover:text-white' : 'text-arch-black/65 hover:text-arch-black'
+                  } ${isActive ? '!text-arch-bronze' : ''}`}
                 >
-                  {dict.nav[link.key as keyof typeof dict.nav]}
+                  <span>{dict.nav[link.key as keyof typeof dict.nav]}</span>
+                  <span
+                    className={`absolute -bottom-0.5 left-0 right-0 h-px bg-arch-bronze origin-left transition-transform duration-500 ${
+                      isActive ? 'scale-x-100' : 'scale-x-0 hover:scale-x-100'
+                    }`}
+                  />
                 </Link>
               );
             })}
             <Link
               href="/quote"
-              className={`px-6 py-2.5 text-xs uppercase tracking-[0.15em] border transition-all duration-300 ${
+              className={`ml-3 text-[11px] uppercase tracking-[0.22em] px-5 py-2.5 transition-all duration-500 ${
                 isHome && !scrolled
-                  ? 'border-white text-white hover:bg-white hover:text-arch-black'
-                  : 'border-arch-black text-arch-black hover:bg-arch-black hover:text-white'
+                  ? 'bg-white text-arch-black hover:bg-arch-bronze hover:text-white'
+                  : 'bg-arch-black text-white hover:bg-arch-bronze'
               }`}
             >
               {dict.nav.quote}
             </Link>
 
-            <div className="flex items-center gap-1 ml-4 pl-4 border-l border-arch-gray/30">
+            <div className="flex items-center gap-0.5 ml-3 pl-4 border-l border-current/10">
               {locales.map((l) => (
                 <button
                   key={l}
                   onClick={() => setLocale(l as Locale)}
-                  className={`text-xs tracking-wider px-2 py-1 transition-colors ${
+                  className={`text-[10px] tracking-[0.15em] px-1.5 py-1 transition-colors duration-300 ${
                     locale === l
-                      ? 'text-arch-bronze font-medium'
+                      ? 'text-arch-bronze'
                       : isHome && !scrolled
-                        ? 'text-white/50 hover:text-white'
-                        : 'text-arch-black/50 hover:text-arch-black'
+                        ? 'text-white/35 hover:text-white/70'
+                        : 'text-arch-black/35 hover:text-arch-black/70'
                   }`}
                   aria-label={l === 'en' ? 'Switch to English' : 'Passer en français'}
                 >
@@ -167,19 +176,19 @@ export default function Header() {
           >
             <motion.span
               animate={mobileOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
-              className={`block w-6 h-[2px] transition-colors duration-300 ${
+              className={`block w-5 h-[1.5px] transition-colors duration-500 ${
                 mobileOpen ? 'bg-arch-black' : scrolled || !isHome ? 'bg-arch-black' : 'bg-white'
               }`}
             />
             <motion.span
               animate={mobileOpen ? { opacity: 0, x: -10 } : { opacity: 1, x: 0 }}
-              className={`block w-6 h-[2px] transition-colors duration-300 ${
+              className={`block w-5 h-[1.5px] transition-colors duration-500 ${
                 mobileOpen ? 'bg-arch-black' : scrolled || !isHome ? 'bg-arch-black' : 'bg-white'
               }`}
             />
             <motion.span
               animate={mobileOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
-              className={`block w-6 h-[2px] transition-colors duration-300 ${
+              className={`block w-5 h-[1.5px] transition-colors duration-500 ${
                 mobileOpen ? 'bg-arch-black' : scrolled || !isHome ? 'bg-arch-black' : 'bg-white'
               }`}
             />

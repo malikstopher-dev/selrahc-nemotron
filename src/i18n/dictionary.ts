@@ -13,10 +13,12 @@ const enDict = {
     faq: 'FAQ',
   },
   hero: {
-    headline: 'Architecture That\nTransforms Place into Identity.',
-    subheadline: 'Every line, every material, every volume — an intentional dialogue between site, light, and human experience. Selrahc Architects creates buildings that belong to their place and elevate the lives within them.',
-    ctaPrimary: 'Schedule a Design Consultation',
-    ctaSecondary: 'View Selected Works',
+    label: 'Award-Winning Architectural Studio',
+    headline: 'Designing Spaces That Shape Identity.',
+    subheadline: 'Thoughtful architecture transforming vision into timeless residential and commercial spaces.',
+    ctaPrimary: 'View Portfolio',
+    ctaSecondary: 'Schedule Consultation',
+    trustIndicators: ['10+ Years Experience', 'Residential & Commercial', 'Sustainable Design'],
   },
   about: {
     title: 'About Selrahc Architects',
@@ -230,10 +232,12 @@ const frDict: Dictionary = {
     faq: 'FAQ',
   },
   hero: {
-    headline: 'Une Architecture Qui\nTransforme le Lieu en Identité.',
-    subheadline: 'Chaque trait, chaque matière, chaque volume — un dialogue intentionnel entre le site, la lumière et l\'expérience humaine. Selrahc Architects conçoit des bâtiments qui appartiennent à leur lieu et élèvent la vie de ceux qui les habitent.',
-    ctaPrimary: 'Planifier une Consultation',
-    ctaSecondary: 'Voir les Travaux Sélectionnés',
+    label: 'Studio d\'Architecture Primé',
+    headline: 'Concevoir des Espaces Qui Forgent l\'Identité.',
+    subheadline: 'Une architecture réfléchie qui transforme la vision en espaces résidentiels et commerciaux intemporels.',
+    ctaPrimary: 'Voir le Portfolio',
+    ctaSecondary: 'Planifier une Consultation',
+    trustIndicators: ['10+ Ans d\'Expérience', 'Résidentiel & Commercial', 'Conception Durable'],
   },
   about: {
     title: 'À Propos de Selrahc Architects',

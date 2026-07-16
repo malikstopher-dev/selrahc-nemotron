@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,12 +26,16 @@ interface CmsTestimonial {
   text: string;
 }
 
+const EASE = [0.25, 0.46, 0.45, 0.94] as const;
+
 export default function HomePage() {
   const { dict } = useLanguage();
   const [currentHero, setCurrentHero] = useState(0);
   const [cmsProjects, setCmsProjects] = useState<CmsProject[]>([]);
   const [cmsTestimonials, setCmsTestimonials] = useState<CmsTestimonial[]>([]);
   const [heroImgs, setHeroImgs] = useState<string[]>(staticHeroImages);
+  const heroRef = useRef<HTMLElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -70,9 +74,22 @@ export default function HomePage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentHero((prev) => (prev + 1) % heroImgs.length);
-    }, 6000);
+    }, 7000);
     return () => clearInterval(interval);
   }, [heroImgs.length]);
+
+  useEffect(() => {
+    const el = bgRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y < window.innerHeight) {
+        el.style.transform = `translate3d(0, ${y * 0.4}px, 0) scale(${1 + y * 0.0002})`;
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const displayProjects = cmsProjects.length > 0 ? cmsProjects : staticProjects;
   const featuredProjects = displayProjects.slice(0, 4);
@@ -82,88 +99,139 @@ export default function HomePage() {
   const allImages = cmsProjects.length > 0
     ? [...cmsProjects.map((p: CmsProject) => p.images[0]).filter(Boolean), ...staticAllImages.slice(cmsProjects.length)]
     : staticAllImages;
+  const trustItems = (dict.hero as { trustIndicators?: string[] }).trustIndicators ?? [];
 
   return (
     <>
       {/* Hero Section */}
-      <section className="relative h-dvh min-h-[600px] md:min-h-screen overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentHero}
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="absolute inset-0"
-          >
-            <Image
-              src={heroImgs[currentHero % heroImgs.length]}
-              alt="Selrahc Architects portfolio"
-              fill
-              className="object-cover"
-              priority
-              sizes="100vw"
-            />
-          </motion.div>
-        </AnimatePresence>
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60" />
-        <div className="relative h-full container-main flex flex-col justify-center">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="max-w-4xl"
-          >
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="inline-block text-arch-bronze text-[10px] md:text-sm uppercase tracking-[0.3em] mb-4 md:mb-6"
+      <section ref={heroRef} className="relative h-dvh min-h-[640px] md:min-h-screen overflow-hidden bg-arch-black">
+        <div ref={bgRef} className="absolute inset-0 will-change-transform">
+          <AnimatePresence mode="sync">
+            <motion.div
+              key={currentHero}
+              initial={{ opacity: 0, scale: 1.08 }}
+              animate={{ opacity: 1, scale: 1.02 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 2, ease: EASE }}
+              className="absolute inset-0"
             >
-              Selrahc Architects
-            </motion.span>
+              <Image
+                src={heroImgs[currentHero % heroImgs.length]}
+                alt="Selrahc Architects portfolio"
+                fill
+                className="object-cover"
+                priority
+                sizes="100vw"
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black/70" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
+
+        <div className="relative h-full container-main flex flex-col justify-end pb-16 md:pb-24 lg:pb-28">
+          <div className="max-w-[550px]">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.4, ease: EASE }}
+              className="flex items-center gap-3 mb-7 md:mb-9"
+            >
+              <span className="block w-8 md:w-10 h-px bg-arch-bronze" />
+              <span className="text-arch-bronze text-[10px] md:text-[11px] uppercase tracking-[0.3em] font-medium">
+                {dict.hero.label}
+              </span>
+            </motion.div>
+
             <motion.h1
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1 }}
-              className="font-heading text-[2.5rem] leading-[1.05] sm:text-5xl md:text-7xl lg:text-8xl text-white tracking-tight"
+              transition={{ duration: 1.1, delay: 0.6, ease: EASE }}
+              className="font-heading text-white font-light leading-[1.02] tracking-[-0.02em] text-[2.75rem] sm:text-6xl md:text-7xl lg:text-[5.5rem]"
             >
-              {dict.hero.headline.split('\n').map((line, i) => (
-                <span key={i}>
-                  {line}
-                  {i === 0 && <br />}
-                </span>
-              ))}
+              {dict.hero.headline}
             </motion.h1>
+
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.3 }}
-              className="mt-4 md:mt-6 text-white/80 text-sm md:text-lg max-w-xl leading-relaxed"
+              transition={{ duration: 1, delay: 1, ease: EASE }}
+              className="mt-6 md:mt-8 text-white/75 text-base md:text-lg lg:text-[1.125rem] leading-[1.65] max-w-[520px] font-light"
             >
               {dict.hero.subheadline}
             </motion.p>
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.6 }}
-              className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-3 md:gap-4"
+              transition={{ duration: 1, delay: 1.25, ease: EASE }}
+              className="mt-9 md:mt-12 flex flex-col sm:flex-row gap-3 sm:gap-4"
             >
               <Link
-                href="/quote"
-                className="w-full sm:w-auto text-center text-xs uppercase tracking-[0.2em] px-8 py-4 border border-white text-white hover:bg-white hover:text-arch-black transition-all duration-300 min-h-[52px] flex items-center justify-center"
+                href="/portfolio"
+                className="group relative overflow-hidden text-center text-[11px] uppercase tracking-[0.22em] px-9 py-4 bg-white text-arch-black font-medium hover:bg-arch-bronze hover:text-white transition-all duration-500 min-h-[52px] flex items-center justify-center"
               >
-                {dict.hero.ctaPrimary}
+                <span className="relative z-10">{dict.hero.ctaPrimary}</span>
               </Link>
               <Link
-                href="/portfolio"
-                className="w-full sm:w-auto text-center text-xs uppercase tracking-[0.2em] px-8 py-4 border border-white/60 text-white/90 hover:bg-white hover:text-arch-black hover:border-white transition-all duration-300 min-h-[52px] flex items-center justify-center"
+                href="/quote"
+                className="group relative overflow-hidden text-center text-[11px] uppercase tracking-[0.22em] px-9 py-4 border border-white/40 text-white hover:border-white hover:bg-white/5 transition-all duration-500 min-h-[52px] flex items-center justify-center backdrop-blur-sm"
               >
-                {dict.hero.ctaSecondary}
+                <span className="relative z-10">{dict.hero.ctaSecondary}</span>
               </Link>
             </motion.div>
-          </motion.div>
+
+            {trustItems.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 1.5, ease: EASE }}
+                className="mt-12 md:mt-16 flex flex-wrap items-center gap-x-6 gap-y-3"
+              >
+                {trustItems.map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    {i > 0 && <span className="hidden sm:block w-px h-3 bg-white/20" />}
+                    <span className="text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-white/60 font-light">
+                      {item}
+                    </span>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </div>
+        </div>
+
+        <div className="absolute bottom-6 md:bottom-8 left-0 right-0 z-10">
+          <div className="container-main flex items-center justify-between text-white/40">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 1.8 }}
+              className="flex items-center gap-3"
+            >
+              <span className="text-[10px] uppercase tracking-[0.3em]">
+                {String(currentHero + 1).padStart(2, '0')} / {String(heroImgs.length).padStart(2, '0')}
+              </span>
+              <span className="block w-12 h-px bg-white/30 overflow-hidden">
+                <motion.span
+                  key={currentHero}
+                  initial={{ x: '-100%' }}
+                  animate={{ x: 0 }}
+                  transition={{ duration: 7, ease: 'linear' }}
+                  className="block w-full h-full bg-arch-bronze"
+                />
+              </span>
+            </motion.div>
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 1.8 }}
+              className="hidden sm:block text-[10px] uppercase tracking-[0.3em]"
+            >
+              Scroll
+            </motion.span>
+          </div>
         </div>
       </section>
 
