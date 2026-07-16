@@ -1,10 +1,12 @@
-import { createServerClient, parseCookieHeader, serializeCookieHeader } from '@supabase/ssr';
-import { NextResponse } from 'next/server';
+import { createServerClient, parseCookieHeader } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const { email, password } = await request.json();
 
-  let supabaseResponse = NextResponse.json({ success: true });
+  console.log('[LOGIN] Attempt for:', email);
+
+  const supabaseResponse = NextResponse.json({ success: true });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,22 +17,29 @@ export async function POST(request: Request) {
           return parseCookieHeader(request.headers.get('Cookie') ?? '');
         },
         setAll(cookiesToSet, headers) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options as Parameters<typeof supabaseResponse.cookies.set>[0])
-          );
-          Object.entries(headers).forEach(([key, value]) =>
-            supabaseResponse.headers.set(key, value)
-          );
+          console.log('[LOGIN] setAll called with', cookiesToSet.length, 'cookies');
+          cookiesToSet.forEach(({ name, value, options }) => {
+            console.log('[LOGIN] Setting cookie:', name, 'path:', options?.path, 'httpOnly:', options?.httpOnly);
+            supabaseResponse.cookies.set(name, value, options as Parameters<typeof supabaseResponse.cookies.set>[0]);
+          });
+          Object.entries(headers).forEach(([key, value]) => {
+            console.log('[LOGIN] Setting header:', key, value);
+            supabaseResponse.headers.set(key, value);
+          });
         },
       },
     }
   );
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
+    console.log('[LOGIN] signInWithPassword error:', error.message, 'status:', error.status);
     return NextResponse.json({ error: error.message }, { status: 401 });
   }
+
+  console.log('[LOGIN] Success! User:', data.user?.email, 'id:', data.user?.id);
+  console.log('[LOGIN] Response cookies:', supabaseResponse.cookies.getAll().map(c => c.name));
 
   return supabaseResponse;
 }
