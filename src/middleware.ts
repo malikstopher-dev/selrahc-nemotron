@@ -16,13 +16,13 @@ export async function middleware(request: NextRequest) {
       get(name: string) {
         return request.cookies.get(name)?.value;
       },
-      set(name: string, value: string) {
-        request.cookies.set({ name, value });
-        response.cookies.set({ name, value });
+      set(name: string, value: string, options?: Record<string, unknown>) {
+        request.cookies.set({ name, value, ...options });
+        response.cookies.set({ name, value, ...options } as Parameters<typeof response.cookies.set>[0]);
       },
-      remove(name: string) {
-        request.cookies.set({ name, value: '' });
-        response.cookies.set({ name, value: '' });
+      remove(name: string, options?: Record<string, unknown>) {
+        request.cookies.set({ name, value: '', ...options });
+        response.cookies.set({ name, value: '', ...options } as Parameters<typeof response.cookies.set>[0]);
       },
     },
   });
