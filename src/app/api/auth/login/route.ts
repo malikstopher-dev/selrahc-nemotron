@@ -30,7 +30,11 @@ export async function POST(request: NextRequest) {
             console.log('[LOGIN] setAll called with', cookiesToSet.length, 'cookies');
             cookiesToSet.forEach(({ name, value, options }) => {
               try {
-                supabaseResponse.cookies.set(name, value, options as Parameters<typeof supabaseResponse.cookies.set>[0]);
+                supabaseResponse.cookies.set({
+                  name,
+                  value,
+                  ...options,
+                });
               } catch (e) {
                 console.error('[LOGIN] Failed to set cookie', name, e);
               }

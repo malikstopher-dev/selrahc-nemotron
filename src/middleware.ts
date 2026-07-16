@@ -1,4 +1,4 @@
-import { createServerClient, parseCookieHeader, serializeCookieHeader } from '@supabase/ssr';
+import { createServerClient, parseCookieHeader } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
       setAll(cookiesToSet, headers) {
         cookiesToSet.forEach(({ name, value, options }) => {
           request.cookies.set({ name, value, ...options });
-          supabaseResponse.cookies.set(name, value, options as Parameters<typeof supabaseResponse.cookies.set>[0]);
+          supabaseResponse.cookies.set({ name, value, ...options });
         });
         Object.entries(headers).forEach(([key, value]) =>
           supabaseResponse.headers.set(key, value)
