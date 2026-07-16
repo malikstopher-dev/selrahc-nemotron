@@ -99,8 +99,6 @@ export default function HomePage() {
   const allImages = cmsProjects.length > 0
     ? [...cmsProjects.map((p: CmsProject) => p.images[0]).filter(Boolean), ...staticAllImages.slice(cmsProjects.length)]
     : staticAllImages;
-  const trustItems = (dict.hero as { trustIndicators?: string[] }).trustIndicators ?? [];
-
   return (
     <>
       {/* Hero Section */}
@@ -181,24 +179,6 @@ export default function HomePage() {
                 <span className="relative z-10">{dict.hero.ctaSecondary}</span>
               </Link>
             </motion.div>
-
-            {trustItems.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 1.5, ease: EASE }}
-                className="mt-12 md:mt-16 flex flex-wrap items-center gap-x-6 gap-y-3"
-              >
-                {trustItems.map((item, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    {i > 0 && <span className="hidden sm:block w-px h-3 bg-white/20" />}
-                    <span className="text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-white/60 font-light">
-                      {item}
-                    </span>
-                  </div>
-                ))}
-              </motion.div>
-            )}
           </div>
         </div>
 

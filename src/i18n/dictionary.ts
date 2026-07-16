@@ -14,11 +14,10 @@ const enDict = {
   },
   hero: {
     label: 'Award-Winning Architectural Studio',
-    headline: 'Designing Spaces That Shape Identity.',
+    headline: 'Designing Spaces That Shape How You Live.',
     subheadline: 'Thoughtful architecture transforming vision into timeless residential and commercial spaces.',
     ctaPrimary: 'View Portfolio',
     ctaSecondary: 'Schedule Consultation',
-    trustIndicators: ['10+ Years Experience', 'Residential & Commercial', 'Sustainable Design'],
   },
   about: {
     title: 'About Selrahc Architects',
@@ -233,11 +232,10 @@ const frDict: Dictionary = {
   },
   hero: {
     label: 'Studio d\'Architecture Primé',
-    headline: 'Concevoir des Espaces Qui Forgent l\'Identité.',
+    headline: 'Concevoir des Espaces Qui Transforment Votre Vie.',
     subheadline: 'Une architecture réfléchie qui transforme la vision en espaces résidentiels et commerciaux intemporels.',
     ctaPrimary: 'Voir le Portfolio',
     ctaSecondary: 'Planifier une Consultation',
-    trustIndicators: ['10+ Ans d\'Expérience', 'Résidentiel & Commercial', 'Conception Durable'],
   },
   about: {
     title: 'À Propos de Selrahc Architects',

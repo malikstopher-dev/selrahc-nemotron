@@ -104,17 +104,22 @@ export default function Header() {
     >
       <div className="container-main">
         <div className="flex items-center justify-between h-14 md:h-[72px]">
-          <Link href="/" className="relative z-30" aria-label="Selrahc Architects Home">
+          <Link href="/" className="relative z-30 flex items-center gap-3" aria-label="Selrahc Architects Home">
             <Image
               src="/images/logo.png"
               alt="Selrahc Architects"
               width={140}
               height={32}
-              className={`h-5 md:h-7 w-auto transition-all duration-500 ${
+              className={`h-6 md:h-[30px] w-auto transition-all duration-500 ${
                 !scrolled && isHome && !mobileOpen ? 'brightness-0 invert' : ''
               }`}
               priority
             />
+            <span className={`hidden sm:block text-[11px] uppercase tracking-[0.25em] font-medium transition-colors duration-500 ${
+              !scrolled && isHome && !mobileOpen ? 'text-white' : 'text-arch-black'
+            }`}>
+              Selrahc<br/>Architects
+            </span>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-7">
