@@ -20,7 +20,7 @@ export default function Footer() {
                 alt="Selrahc Architects"
                 width={140}
                 height={32}
-                className="h-6 md:h-8 w-auto brightness-0 invert"
+                className="h-6 md:h-[42px] w-auto brightness-0 invert"
               />
             </Link>
             <p className="mt-4 md:mt-6 text-sm text-arch-gray leading-relaxed">

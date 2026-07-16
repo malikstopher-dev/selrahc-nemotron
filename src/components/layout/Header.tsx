@@ -110,12 +110,12 @@ export default function Header() {
               alt="Selrahc Architects"
               width={140}
               height={32}
-              className={`h-6 md:h-[30px] w-auto transition-all duration-500 ${
+              className={`h-7 md:h-[34px] w-auto transition-all duration-500 ${
                 !scrolled && isHome && !mobileOpen ? 'brightness-0 invert' : ''
               }`}
               priority
             />
-            <span className={`hidden sm:block text-[11px] uppercase tracking-[0.25em] font-medium transition-colors duration-500 ${
+            <span className={`text-[10px] sm:text-[11px] uppercase tracking-[0.25em] font-medium transition-colors duration-500 leading-tight ${
               !scrolled && isHome && !mobileOpen ? 'text-white' : 'text-arch-black'
             }`}>
               Selrahc<br/>Architects

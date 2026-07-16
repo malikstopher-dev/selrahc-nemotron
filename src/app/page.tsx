@@ -128,7 +128,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black/70" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
 
-        <div className="relative h-full container-main flex flex-col justify-end pb-16 md:pb-24 lg:pb-28">
+        <div className="relative h-full container-main flex flex-col justify-center pb-24 md:pb-28">
           <div className="max-w-[550px]">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -146,7 +146,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.1, delay: 0.6, ease: EASE }}
-              className="font-heading text-white font-light leading-[1.02] tracking-[-0.02em] text-[2.75rem] sm:text-6xl md:text-7xl lg:text-[5.5rem]"
+              className="font-heading text-white font-light leading-[1.05] tracking-[-0.015em] text-[2rem] sm:text-4xl md:text-5xl lg:text-6xl"
             >
               {dict.hero.headline}
             </motion.h1>
