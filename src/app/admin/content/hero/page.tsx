@@ -5,9 +5,11 @@ import TextField from '@/components/admin/TextField';
 import SaveButton from '@/components/admin/SaveButton';
 import ImagePicker from '@/components/admin/ImagePicker';
 import Toast from '@/components/admin/Toast';
+import { dictionaries } from '@/i18n/dictionary';
 
 export default function HeroEditor() {
   const [locale, setLocale] = useState<'en' | 'fr'>('en');
+  const defaults = dictionaries[locale].hero;
   const [headline, setHeadline] = useState('');
   const [subheadline, setSubheadline] = useState('');
   const [ctaPrimary, setCtaPrimary] = useState('');
@@ -21,15 +23,20 @@ export default function HeroEditor() {
       .then(r => r.json())
       .then(({ data }) => {
         const content = data?.find((d: { key: string }) => d.key === 'hero');
-        if (content?.value) {
-          setHeadline(content.value.headline || '');
-          setSubheadline(content.value.subheadline || '');
-          setCtaPrimary(content.value.ctaPrimary || '');
-          setCtaSecondary(content.value.ctaSecondary || '');
-          setHeroImages(content.value.heroImages || []);
-        }
+        const v = content?.value;
+        setHeadline(v?.headline || defaults.headline);
+        setSubheadline(v?.subheadline || defaults.subheadline);
+        setCtaPrimary(v?.ctaPrimary || defaults.ctaPrimary);
+        setCtaSecondary(v?.ctaSecondary || defaults.ctaSecondary);
+        setHeroImages(v?.heroImages || []);
+      })
+      .catch(() => {
+        setHeadline(defaults.headline);
+        setSubheadline(defaults.subheadline);
+        setCtaPrimary(defaults.ctaPrimary);
+        setCtaSecondary(defaults.ctaSecondary);
       });
-  }, [locale]);
+  }, [locale, defaults]);
 
   const save = async () => {
     setSaving(true);
@@ -69,8 +76,8 @@ export default function HeroEditor() {
           <TextField label="Headline" value={headline} onChange={setHeadline} placeholder="Architecture That Transforms..." />
           <TextField label="Subheadline" value={subheadline} onChange={setSubheadline} multiline rows={3} />
           <div className="grid grid-cols-2 gap-4">
-            <TextField label="Primary CTA" value={ctaPrimary} onChange={setCtaPrimary} placeholder="Schedule a Design Consultation" />
-            <TextField label="Secondary CTA" value={ctaSecondary} onChange={setCtaSecondary} placeholder="View Selected Works" />
+            <TextField label="Primary CTA" value={ctaPrimary} onChange={setCtaPrimary} placeholder="View Portfolio" />
+            <TextField label="Secondary CTA" value={ctaSecondary} onChange={setCtaSecondary} placeholder="Schedule Consultation" />
           </div>
         </div>
 

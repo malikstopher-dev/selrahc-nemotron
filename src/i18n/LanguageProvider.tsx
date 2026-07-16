@@ -27,6 +27,7 @@ function mergeCmsContent(base: Dictionary, cmsData: Record<string, unknown> | nu
   const merged = { ...base } as Record<string, unknown>;
 
   for (const key of Object.keys(merged)) {
+    if (key === 'hero') continue;
     const cmsValue = cmsData[key];
     if (cmsValue && typeof cmsValue === 'object' && typeof merged[key] === 'object' && merged[key] !== null) {
       merged[key] = { ...(merged[key] as Record<string, unknown>), ...(cmsValue as Record<string, unknown>) };

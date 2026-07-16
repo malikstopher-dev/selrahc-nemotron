@@ -8,7 +8,7 @@ export async function seedCmsContent() {
   // Seed site content for both locales
   for (const [locale, dict] of Object.entries(dictionaries)) {
     const sections: Record<string, unknown> = {
-      hero: { ...dict.hero, heroImages },
+      hero: { heroImages },
       about: dict.about,
       services: dict.services,
       process: dict.process,
